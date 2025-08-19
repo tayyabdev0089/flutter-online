@@ -1,0 +1,21 @@
+{
+  "name": "Flutter Web (Codespaces)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.dart-code",
+        "Dart-Code.flutter"
+      ]
+    }
+  },
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": { "label": "Flutter Web", "onAutoForward": "openBrowser" }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh"
+}
