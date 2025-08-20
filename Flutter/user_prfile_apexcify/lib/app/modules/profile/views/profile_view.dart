@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:user_prfile_apexcify/app/routes/app_routes.dart';
@@ -14,69 +16,70 @@ class ProfileScreen extends GetView<ProfileController> {
         title: const Text('User Profile'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Obx(
-        () {
-          if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (controller.hasError.value || controller.userProfile.value == null) {
-            return EmptyState(onRetry: controller.loadUserProfile);
-          } else {
-            final userProfile = controller.userProfile.value!;
-            return RefreshIndicator(
-              onRefresh: controller.loadUserProfile,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ProfileHeader(userProfile: userProfile),
-                            const SizedBox(height: 24),
-                            _buildInfoCard(
-                              context,
-                              icon: Icons.email,
-                              title: 'Email',
-                              child: ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                leading: const Icon(Icons.email_outlined),
-                                title: Text(
-                                  userProfile.email.isEmpty
-                                      ? 'Not provided'
-                                      : userProfile.email,
-                                ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (controller.hasError.value ||
+            controller.userProfile.value == null) {
+          return EmptyState(onRetry: controller.loadUserProfile);
+        } else {
+          final userProfile = controller.userProfile.value!;
+          return RefreshIndicator(
+            onRefresh: controller.loadUserProfile,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ProfileHeader(userProfile: userProfile),
+                          const SizedBox(height: 24),
+                          _buildInfoCard(
+                            context,
+                            icon: Icons.email,
+                            title: 'Email',
+                            child: ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: const Icon(Icons.email_outlined),
+                              title: Text(
+                                userProfile.email.isEmpty
+                                    ? 'Not provided'
+                                    : userProfile.email,
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            _buildInfoCard(
-                              context,
-                              icon: Icons.info,
-                              title: 'Bio',
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                  userProfile.bio.isEmpty
-                                      ? 'No bio yet.'
-                                      : userProfile.bio,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
+                          ),
+                          const SizedBox(height: 16),
+                          _buildInfoCard(
+                            context,
+                            icon: Icons.info,
+                            title: 'Bio',
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                userProfile.bio.isEmpty
+                                    ? 'No bio yet.'
+                                    : userProfile.bio,
+                                style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-              ),
-            );
-          }
-        },
-      ),
+                  ),
+                );
+              },
+            ),
+          );
+        }
+      }),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Get.toNamed(Routes.editProfile),
         label: const Text('Edit Profile'),
@@ -97,7 +100,7 @@ class ProfileScreen extends GetView<ProfileController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha((0.05* 255).toInt()),
+            color: Colors.black.withAlpha((0.05 * 255).toInt()),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -109,10 +112,7 @@ class ProfileScreen extends GetView<ProfileController> {
 }
 
 class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({
-    super.key,
-    required this.userProfile,
-  });
+  const ProfileHeader({super.key, required this.userProfile});
 
   final UserProfile userProfile;
 
@@ -126,7 +126,9 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final hasAvatar = userProfile.avatarUrl != null && userProfile.avatarUrl!.isNotEmpty;
+    final hasAvatar =
+        userProfile.localAvatarPath != null &&
+        userProfile.localAvatarPath!.isNotEmpty;
 
     return Center(
       child: Column(
@@ -134,7 +136,9 @@ class ProfileHeader extends StatelessWidget {
           CircleAvatar(
             radius: 50,
             backgroundColor: theme.colorScheme.primaryContainer,
-            backgroundImage: hasAvatar ? NetworkImage(userProfile.avatarUrl!) : null,
+            backgroundImage: hasAvatar
+                ? FileImage(userProfile.localAvatarPath as File)
+                : null,
             child: !hasAvatar
                 ? Text(
                     _initials,

@@ -7,14 +7,14 @@ class UserProfile {
     required this.fullName,
     required this.email,
     required this.bio,
-    this.avatarUrl,
+    this.localAvatarPath, // Changed from avatarUrl
   });
 
   final String id; // Added ID
   final String fullName;
   final String email;
   final String bio;
-  final String? avatarUrl;
+  final String? localAvatarPath;
 
   factory UserProfile.fromMap(Map<String, dynamic> map) {
     return UserProfile(
@@ -22,7 +22,23 @@ class UserProfile {
       fullName: map['fullName'] as String,
       email: map['email'] as String,
       bio: map['bio'] as String,
-      avatarUrl: map['avatarUrl'] as String?,
+      localAvatarPath: map['localAvatarPath'] as String?,
+    );
+  }
+
+  UserProfile copyWith({
+    String? id,
+    String? fullName,
+    String? email,
+    String? bio,
+    String? localAvatarPath,
+  }) {
+    return UserProfile(
+      id: id ?? this.id,
+      fullName: fullName ?? this.fullName,
+      email: email ?? this.email,
+      bio: bio ?? this.bio,
+      localAvatarPath: localAvatarPath ?? this.localAvatarPath,
     );
   }
 
@@ -31,7 +47,7 @@ class UserProfile {
         fullName = '',
         email = '',
         bio = '',
-        avatarUrl = null;
+        localAvatarPath = null;
 
   bool get isEmpty => id.isEmpty && fullName.isEmpty && email.isEmpty; // Added ID check
 }

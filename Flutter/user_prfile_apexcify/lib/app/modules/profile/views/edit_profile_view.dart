@@ -1,4 +1,5 @@
 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/profile_controller.dart';
@@ -45,13 +46,13 @@ class EditProfileScreen extends GetView<ProfileController> {
                     radius: 50,
                     backgroundImage: controller.pickedImage.value != null
                         ? FileImage(controller.pickedImage.value!)
-                        : (controller.userProfile.value?.avatarUrl != null &&
-                                controller.userProfile.value!.avatarUrl!.isNotEmpty
-                            ? NetworkImage(controller.userProfile.value!.avatarUrl!)
+                        : (controller.userProfile.value?.localAvatarPath != null &&
+                                controller.userProfile.value!.localAvatarPath!.isNotEmpty
+                            ? FileImage(File(controller.userProfile.value!.localAvatarPath!)) // Use FileImage for local path
                             : null) as ImageProvider?,
                     child: controller.pickedImage.value == null &&
-                            (controller.userProfile.value?.avatarUrl == null ||
-                                controller.userProfile.value!.avatarUrl!.isEmpty)
+                            (controller.userProfile.value?.localAvatarPath == null ||
+                                controller.userProfile.value!.localAvatarPath!.isEmpty)
                         ? const Icon(Icons.camera_alt, size: 40)
                         : null,
                   ),

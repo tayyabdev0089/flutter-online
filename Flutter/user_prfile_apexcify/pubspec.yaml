@@ -32,6 +32,7 @@ dependencies:
     sdk: flutter
   get: ^4.6.6
   image_picker: ^1.0.1
+  path_provider: ^2.0.11 # Added for local file storage
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
